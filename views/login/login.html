@@ -6,6 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="/views/login/login.css">
         <title>myZapy Login</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +16,12 @@
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
-        <script src="" async defer></script>
+        <form id="login-form">
+            <input type="text" name="username">
+            <input type="password" name="password">
+            <input type="submit" value="Entrar">
+        </form>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="/views/login/login.js"></script>
     </body>
 </html>
