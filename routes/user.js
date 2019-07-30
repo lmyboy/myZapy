@@ -1,27 +1,26 @@
-// ===== EXTERNALIMPORTS
+// ============ EXTERNALIMPORTS
 const express = require ('express');
 const bcrypt = require('bcrypt');
 
-// ===== INTERNAL IMPORTS
+// ============ INTERNAL IMPORTS
 const db = require('../providers/firebase');
 const handleError = require('../providers/handle-error');
 
 //criando o app express
 const app = express();
 
-//===== model USER
+// ============ model USER
 const User = db.ref(`${process.env.FIREBASE_ACCESS_TOKEN}/user`);
 
 app.post('/register', async (req, res) => {
     try {
         // Missing data Err
-            if(
+        if(
                !req.body.username
             || !req.body.password
             || !req.body.password2
             || !req.body.alias
         ){
-            console.log(req.body);
             handleError(res, null, 'missing-data!');
             return;
         }
@@ -58,13 +57,62 @@ app.post('/register', async (req, res) => {
 
         //TODO: 
         res.send('ok');
+        
     } catch (err) {
        handleError(res, err, null); 
     } 
 });
 
-app.post('/login', (req, res) => {
-    res.send('usuario');
+// ============ LOGIN
+
+app.post('/login', async (req, res)=>
+{
+    try {
+        //missing data on login
+        if(!req.body.username|| !req.body.password){
+            handleError(res, null, 'missing-data');
+            return;
+        }
+
+        //user not found
+        const user = (
+            await User
+                .orderByChild('username')
+                .equalTo(req.body.username)
+                .once('value')
+        ).val();
+
+        // duplicated user err
+        if(!user){
+            handleError(res, null, 'user-not-found');
+            return;
+        }
+
+        const [ userID, userData ] = Object.entries(user)[0];
+        
+        console.log(`
+            username: ${userData.username}
+            alias: ${userData.alias}
+            userID: ${userID}
+            password: ${userData.password}
+        `);
+
+        //check password
+        const match = await bcrypt.compare(req.body.password, userData.password);
+        
+        if(!match){
+            handleError(res, null, 'wrong-password');
+            return;
+        }
+
+        if (match){
+            req.session.userID = userID;
+            res.send('OK');
+            return;
+        }
+    } catch (error) {
+        handleError(res, err, null);
+    }
 });
 
 

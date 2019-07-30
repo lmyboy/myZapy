@@ -15,7 +15,22 @@
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        
-        <script src="" async defer></script>
+        <h1>Register</h1>
+        <p>
+            <a href="/">HOME </a><br>
+            <a href="/login">LOGIN </a><br>
+            <a href="/register">REGISTER </a><br>
+        </p>
+        <div>
+            <form id="register-form">
+                    <input type="text" name="username" placeholder="Nome"><br>
+                    <input type="text" name="alias" placeholder="Login"><br>
+                    <input type="password" name="password" placeholder="Senha"><br>
+                    <input type="password" name="password2" placeholder="Confirmação de Senha"><br>
+                    <input type="submit" value="Enviar">
+            </form>
+        </div>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="/views/register/register.js"></script>
     </body>
 </html>

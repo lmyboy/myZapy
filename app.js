@@ -7,6 +7,7 @@
 //===== EXTERNAL IMPORTS
 //express
 const express = require('express');
+const session = require('express-session')
 const app = express();
 
 //path
@@ -27,6 +28,13 @@ dotenv.config();
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+const sess = {
+    secret: process.env.SESSION_TOKEN,
+    cookie: {}
+};
+
+app.use(session(sess));
 
 
 app.use('/views', express.static('views')); // permitir acesso estático a pasta views
