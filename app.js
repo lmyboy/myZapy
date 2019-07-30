@@ -1,26 +1,24 @@
 // myZapy
 
-
-// Adicionando o Express ao projeto, é preciso instalar antes com: 
-// npm i express --save -> é para escrever no package.json
-
-//===== EXTERNAL IMPORTS
-//express
+// ============ EXTERNAL IMPORTS
+// ------------ express
 const express = require('express');
-const session = require('express-session')
 const app = express();
 
-//path
+// ------------ express-session
+const session = require('express-session');
+
+// ------------ path
 const path = require('path');
 
-//.env
+// ------------ .env
 const dotenv = require('dotenv');
 
-//bodyParser
+// ------------ bodyParser
 const bodyParser = require('body-parser');
 
 //===== INTERNAL IMPORTS
-
+const hadleError = require('./providers/handle-error');
 
 //===== MIDDLEWERE
 
@@ -31,11 +29,12 @@ app.use(bodyParser.json());
 
 const sess = {
     secret: process.env.SESSION_TOKEN,
+    resave: false,
+    saveUninitialized: true,
     cookie: {}
 };
 
 app.use(session(sess));
-
 
 app.use('/views', express.static('views')); // permitir acesso estático a pasta views
 
@@ -45,16 +44,11 @@ const getViewPath = (view) => {
     return path.join(__dirname, `./views/${view}/${view}.html`);
 }
 
-// ====== ROUTES
+// ============ USER ROUTES
 app.use('/api/user', require('./routes/user'));
-app.use('/api/message', require('./routes/message'));
 
-
-// ======= VIEWS
-app.get('/', (req, res)=> {
-    res.sendFile(getViewPath('home'));
-});
-
+// ============ VIEWS
+// ------------ OTHERS
 app.get('/:view', (req, res) => {
     res.sendFile(getViewPath(req.params.view), err => {
         if(err){
@@ -63,11 +57,34 @@ app.get('/:view', (req, res) => {
     });
 })
 
+// ============ ACESS CONTROL
 
+app.use((req, res, next)=>{
+    if (!req.session.userID) {
+        if (req.url.indexOf('api') !== -1) {
+            hadleError(res,null, 'unauthenticated');
+            return;
+        }
+        res.redirect('/login');
+        return;
+    };
+    next();
+});
 
+// ------------ HOME
+app.get('/', (req, res)=> {
+    //print session
+    console.log(req.session.userID);
 
-// ====== Server run
+    //send home
+    res.sendFile(getViewPath('home'));
+});
 
-app.listen(2018, ()=> {
+app.use('/api/message', require('./routes/message'));
+
+// ============ Server run
+const port = 80;
+
+app.listen(port, ()=> {
     console.log('Rôdando!\n');
 });

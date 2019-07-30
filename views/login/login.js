@@ -9,7 +9,13 @@ gel('#login-form').addEventListener('submit', async (e) => {
             username: gel('input[name=username]').value,
             password: gel('input[name=password]').value,
         });
+
+        console.log('response:\n');
         console.log(response);
+
+        if(response === 'OK!'){
+            window.location.replace('/');
+        };
     } catch (err){
         console.log(err.response);
     }

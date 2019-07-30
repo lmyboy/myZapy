@@ -1,4 +1,4 @@
-// ============ EXTERNALIMPORTS
+// ============ EXTERNAL IMPORTS
 const express = require ('express');
 const bcrypt = require('bcrypt');
 
@@ -9,9 +9,13 @@ const handleError = require('../providers/handle-error');
 //criando o app express
 const app = express();
 
-// ============ model USER
+// ============ models 
+// ------------ USER
 const User = db.ref(`${process.env.FIREBASE_ACCESS_TOKEN}/user`);
 
+// ------------
+
+// ============ /REGISTER
 app.post('/register', async (req, res) => {
     try {
         // Missing data Err
@@ -63,8 +67,7 @@ app.post('/register', async (req, res) => {
     } 
 });
 
-// ============ LOGIN
-
+// ============ /LOGIN
 app.post('/login', async (req, res)=>
 {
     try {
@@ -82,7 +85,7 @@ app.post('/login', async (req, res)=>
                 .once('value')
         ).val();
 
-        // duplicated user err
+        // duplicated user error
         if(!user){
             handleError(res, null, 'user-not-found');
             return;
@@ -90,24 +93,26 @@ app.post('/login', async (req, res)=>
 
         const [ userID, userData ] = Object.entries(user)[0];
         
-        console.log(`
-            username: ${userData.username}
-            alias: ${userData.alias}
-            userID: ${userID}
-            password: ${userData.password}
-        `);
+        // console.log(`
+        //     username: ${userData.username}
+        //     alias: ${userData.alias}
+        //     userID: ${userID}
+        //     password: ${userData.password}
+        // `);
 
         //check password
         const match = await bcrypt.compare(req.body.password, userData.password);
-        
         if(!match){
             handleError(res, null, 'wrong-password');
             return;
         }
 
         if (match){
+            //creating session for user with userID;
             req.session.userID = userID;
-            res.send('OK');
+            
+            //sendo response
+            res.send('OK!');
             return;
         }
     } catch (error) {
@@ -115,5 +120,33 @@ app.post('/login', async (req, res)=>
     }
 });
 
+// ============ /CONTACT
+app.post('/contact:contact' ,async (req, res) => {
+    try {
+        const contact = (
+            await User
+                .orderByChild('username')
+                .equalTo(req.params.contact)
+                .once('value')
+        ).val();
 
+        if(!contact){
+            handleError(res, null, 'contact-not-found');
+            return;
+        }
+
+        const [ contactID, contactData ] = Object.entries(contact)[0];
+
+        //Add contact to a user
+        User.child(req.session.userID).child('contacts').push(
+        {
+            alias: contactData.alias,
+            id: contactID,
+        });
+    } catch (error) {
+        
+    }
+});
+
+// ============ exports
 module.exports = app; 
