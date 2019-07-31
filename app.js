@@ -73,9 +73,6 @@ app.use((req, res, next)=>{
 
 // ------------ HOME
 app.get('/', (req, res)=> {
-    //print session
-    console.log(req.session.userID);
-
     //send home
     res.sendFile(getViewPath('home'));
 });

@@ -10,7 +10,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
-    </head>
+    </head>  
     <body>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
@@ -22,7 +22,26 @@
             <a href="/register">REGISTER </a><br>
             <a href="/chat">CHAT </a><br>
         </p>
+        <div id="add-contact-div">
+            <h1>Adicionar Contato</h1>
+            <form id="add-contact-form">
+                <p>
+                    <input type="text" name="contact" placeholder="Nome do contato">
+                    <input type="submit" value="Adicionar">
+                </p>    
+            </form>
+        </div>
         
-        <script src="" async defer></script>
+        <br><hr><br>
+        <div id="contacts">
+            <h1>Contatos</h1>
+        </div>
+        <br><hr><br>
+        <div id="chat">
+            <h1>Chat</h1>
+        </div>
+        
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="/views/home/home.js"></script>
     </body>
 </html>

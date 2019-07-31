@@ -121,7 +121,7 @@ app.post('/login', async (req, res)=>
 });
 
 // ============ /CONTACT
-app.post('/contact:contact' ,async (req, res) => {
+app.post('/contact/:contact' , async (req, res) => {
     try {
         const contact = (
             await User
@@ -143,10 +143,28 @@ app.post('/contact:contact' ,async (req, res) => {
             alias: contactData.alias,
             id: contactID,
         });
+        res.send('ok');
     } catch (error) {
-        
+        handleError(res, err, null);
     }
 });
+
+app.get('/contact', async (req, res)=>{
+    try {
+        const contactsFirebase = await User.child(req.session.userID).child('contacts').once('value');
+        const contacts = [];
+        contactsFirebase.forEach((contact)=>{
+            contacts.push(contact.val());
+        });
+        if (req.query.tamanho) {
+            res.send(''+contacts.length);
+            return;
+        }
+        res.send(contacts);
+    } catch (err) {
+        handleError(res,err,null);
+    }
+})
 
 // ============ exports
 module.exports = app; 

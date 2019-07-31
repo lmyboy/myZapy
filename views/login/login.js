@@ -13,7 +13,7 @@ gel('#login-form').addEventListener('submit', async (e) => {
         console.log('response:\n');
         console.log(response);
 
-        if(response === 'OK!'){
+        if(response.data === 'OK!'){
             window.location.replace('/');
         };
     } catch (err){
